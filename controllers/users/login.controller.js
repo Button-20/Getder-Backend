@@ -8,6 +8,11 @@ async function login(req, res) {
       const { firstname, lastname, email, phone, authMethod, profile_picture } =
         req.body;
 
+      if (!firstname || !lastname || !email || !authMethod)
+        return resolve(
+          res.status(400).json({ message: "Missing required fields" })
+        );
+
       // Check if user email or phone already exists
       let user = await User.findOne({
         $or: [{ email }, { phone }],
@@ -92,5 +97,5 @@ async function login(req, res) {
 module.exports = {
   method: "post",
   route: "/login",
-  controller: login,
+  controller: [login],
 };

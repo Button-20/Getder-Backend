@@ -7,20 +7,20 @@ async function profile(req, res) {
       if (!user) {
         return resolve(
           res.status(404).json({
-            message: "User not found",
+            message: "😥 User not found",
           })
         );
       }
       return resolve(
         res.status(200).json({
-          message: "User found",
+          message: "🎉 User fetched successfully!!",
           data: user,
         })
       );
     } catch (error) {
       return reject(
         res.status(500).json({
-          message: "Internal server error",
+          message: "😥 Internal server error!!",
           error: error,
         })
       );
@@ -31,5 +31,5 @@ async function profile(req, res) {
 module.exports = {
   method: "get",
   route: "/profile",
-  controller: profile,
+  controller: [profile],
 };

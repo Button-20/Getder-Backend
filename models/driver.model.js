@@ -1,29 +1,32 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const userSchema = new Schema(
+const driverSchema = new Schema(
   {
     firstname: {
       type: String,
       required: true,
-      min: 3,
     },
     lastname: {
       type: String,
       required: true,
-      min: 3,
     },
     email: {
       type: String,
-      default: "",
-      sparse: true,
-      unique: true,
+      required: true,
     },
     phone: {
       type: String,
-      default: "",
-      sparse: true,
-      unique: true,
+      required: true,
+    },
+    deactivated: {
+      status: {
+        type: Boolean,
+        default: false,
+      },
+      reason: {
+        type: String,
+      },
     },
     profile_picture: {
       type: String,
@@ -46,4 +49,4 @@ const userSchema = new Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model("Driver", driverSchema);
