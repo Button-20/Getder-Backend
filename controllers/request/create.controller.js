@@ -1,7 +1,7 @@
-const Order = require("../../models/orders.model");
+const Request = require("../../models/request.model");
 const verifyUser = require("../../middleware/verifyUser.module");
 const { TRIGGERS } = require("../../utils/variables");
-const { emitToUser } = require("../../config/socket.config");
+const socketService = require("../../config/socket.config");
 
 async function create(req, res) {
   try {
@@ -24,23 +24,26 @@ async function create(req, res) {
     )
       return res.status(400).json({ message: "😒 Invalid request!!" });
 
-    const order = new Order({
+    const request = new Request({
+      user: req.user._id,
       pickup_location,
       dropoff_location,
       car_type,
+      currency: { code, symbol },
       suggested_price,
-      code,
-      symbol,
     });
 
-    await order.save();
+    await request.save();
 
     // Trigger event
-    emitToUser("trigger", { trigger: TRIGGERS.NEW_ORDER, data: order });
+    socketService.emitToUser("trigger", {
+      trigger: TRIGGERS.NEW_REQUEST,
+      data: request,
+    });
 
     return res.status(200).json({
-      message: "🎉 Order created successfully!!",
-      data: order,
+      message: "🎉 Request created successfully!!",
+      data: request,
     });
   } catch (error) {
     return res.status(500).json({
@@ -52,6 +55,6 @@ async function create(req, res) {
 
 module.exports = {
   method: "post",
-  route: "/order",
+  route: "/request",
   controller: [verifyUser, create],
 };

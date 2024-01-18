@@ -42,8 +42,27 @@ const userSchema = new Schema(
       enum: ["local", "google", "facebook"],
       default: "local",
     },
+    locationHistory: [
+      {
+        type: String,
+        default: "",
+      },
+    ],
   },
   { timestamps: true }
 );
+
+userSchema.pre("save", async function (next) {
+  // if profile_picture is not set, set it to a default image https://ui-avatars.com/api/?name=John+Doe
+  if (!this.profile_picture) {
+    this.profile_picture =
+      "https://ui-avatars.com/api/?name=" +
+      this.firstname +
+      "+" +
+      this.lastname;
+  }
+
+  next();
+});
 
 module.exports = mongoose.model("User", userSchema);

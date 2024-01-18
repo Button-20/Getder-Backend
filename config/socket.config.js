@@ -1,57 +1,71 @@
-const socket = require("socket.io");
+const socketio = require("socket.io");
 const connectedUsers = {};
 const User = require("../models/user.model");
 
 let io;
-let userSocket;
+let socket;
 
 function socketConfig(server) {
-  io = socket(server, {
+  console.log("Socket config started on PORT:", server.address().port);
+  io = socketio(server, {
     cors: {
       origin: "*",
       methods: ["GET", "POST"],
     },
   });
 
-  io.on("connection", (socket) => {
-    console.log("Socket connection established");
+  io.on("connection", handleConnection);
+}
 
-    userSocket = socket;
+async function handleConnection(socket) {
+  console.log("Socket connection established");
 
-    socket.on("join", async (data) => {
-      console.log("User joined:", data._id);
-      const user = await User.findOne({ _id: data._id });
-      if (!user)
-        return socket.emit("error", {
-          message: "User not found",
-        });
+  socket.on("join", async (data) => {
+    try {
+      console.log("User joined:", data.userId);
+      const user = await User.findOne({ _id: data.userId });
+
+      if (!user) {
+        socket.emit("error", { message: "User not found" });
+        return;
+      }
 
       user.online = true;
       await user.save();
-      connectedUsers[data._id] = socket.id;
-      socket.join(data._id);
-      console.log("User joined:", data._id);
-    });
-
-    socket.on("disconnect", async () => {
-      console.log("Socket disconnected");
-
-      for (const userId in connectedUsers) {
-        if (connectedUsers[userId] === socket.id) {
-          delete connectedUsers[userId];
-          let user = await User.findOne({ _id: userId });
-          if (!user)
-            return socket.emit("error", {
-              message: "User not found",
-            });
-
-          user.online = false;
-          await user.save();
-          break;
-        }
-      }
-    });
+      socket.join(data.userId);
+      console.log("User joined:", data.userId);
+    } catch (error) {
+      console.error("Error during user join:", error);
+      socket.emit("error", { message: "Internal server error" });
+    }
   });
+
+  socket.on("disconnect", handleDisconnect);
+}
+
+async function handleDisconnect() {
+  console.log("Socket disconnected");
+
+  for (const userId in connectedUsers) {
+    if (connectedUsers[userId] === socket.id) {
+      try {
+        delete connectedUsers[userId];
+        const user = await User.findOne({ _id: userId });
+
+        if (!user) {
+          socket.emit("error", { message: "User not found" });
+          return;
+        }
+
+        user.online = false;
+        await user.save();
+        break;
+      } catch (error) {
+        console.error("Error during user disconnect:", error);
+        socket.emit("error", { message: "Internal server error" });
+      }
+    }
+  }
 }
 
 function emit(event, data) {
@@ -67,13 +81,16 @@ function emitToRoom(roomId, event, data) {
 }
 
 function emitToAllExceptUser(userId, event, data) {
-  userSocket.broadcast.to(connectedUsers[userId]).emit(event, data);
+  socket.broadcast.to(connectedUsers[userId]).emit(event, data);
 }
 
-module.exports = {
+const socketService = {
   socketConfig,
   emit,
   emitToUser,
   emitToRoom,
   emitToAllExceptUser,
+  io,
 };
+
+module.exports = socketService;

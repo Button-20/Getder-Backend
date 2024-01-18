@@ -45,8 +45,53 @@ const driverSchema = new Schema(
       enum: ["local", "google", "facebook"],
       default: "local",
     },
+    vehicleDetails: {
+      type: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: "VehicleType",
+      },
+      model: {
+        type: String,
+        required: true,
+      },
+      plateNumber: {
+        type: String,
+        required: true,
+      },
+      color: {
+        type: String,
+        required: true,
+      },
+    },
+    driversLicense: {
+      type: String,
+      required: true,
+    },
+    locationHistory: [
+      {
+        type: String,
+        default: "",
+      },
+    ],
+    available: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
+
+driverSchema.pre("save", async function (next) {
+  // if profile_picture is not set, set it to a default image https://ui-avatars.com/api/?name=John+Doe
+  if (!this.profile_picture) {
+    this.profile_picture =
+      "https://ui-avatars.com/api/?name=" +
+      this.firstname +
+      "+" +
+      this.lastname;
+  }
+  next();
+});
 
 module.exports = mongoose.model("Driver", driverSchema);

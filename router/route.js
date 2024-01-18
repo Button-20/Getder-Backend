@@ -4,29 +4,33 @@ const jwtHelper = require("../utils/jwtHelper.js");
 const fs = require("fs");
 const path = require("path");
 
+const excludedFolders = ["message"]; // Add the names of folders to be excluded
+
 function getAllFiles(dir, allFilesList = []) {
   const files = fs.readdirSync(dir);
-  files.map((file) => {
-    const name = dir + "/" + file;
+  files.forEach((file) => {
+    const name = path.join(dir, file);
     if (fs.statSync(name).isDirectory()) {
-      // check if subdirectory is present
-      getAllFiles(name, allFilesList); // Do recursive execution for subdirectory
+      if (!excludedFolders.includes(file)) {
+        getAllFiles(name, allFilesList);
+      }
     } else if (!name.includes("/index")) {
-      // Ignore index routes
-      allFilesList.push(name); // Push filename into the array
+      allFilesList.push(name);
     }
   });
   return allFilesList;
 }
-
-// Subdirectories from this folder inwards
 const dirPath = path.resolve(__dirname, "../controllers");
 const allRoutesFiles = getAllFiles(dirPath);
 
-// Import all routes
-allRoutesFiles.map((file) => {
-  const route = require(file);
-  app[route.method](route.route, jwtHelper.verifyJwtToken, route.controller);
+// Import all routes dynamically using require
+allRoutesFiles.forEach((file) => {
+  try {
+    const route = require(file);
+    app[route.method](route.route, jwtHelper.verifyJwtToken, route.controller);
+  } catch (error) {
+    console.error(`Error importing route from ${file}:`, error);
+  }
 });
 
 module.exports = app;
