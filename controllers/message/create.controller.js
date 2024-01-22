@@ -53,4 +53,36 @@ socketService.io.on("send-message", async (data) => {
   }
 });
 
+socketService.io.on("typing", async (data) => {
+  try {
+    const { sender, chat_session, receiver } = data;
 
+    // Check if chat session exists
+    const chatSession = await ChatSession.findById(chat_session);
+    if (!chatSession) {
+      throw new Error("Chat session not found");
+    }
+
+    // Check if sender exists in either user or driver collection
+    const senderUser = await User.findById(sender);
+    const senderDriver = await Driver.findById(sender);
+    if (!senderUser && !senderDriver) {
+      throw new Error("Sender not found");
+    }
+
+    // Check if receiver exists in either user or driver collection
+    const receiverUser = await User.findById(receiver);
+    const receiverDriver = await Driver.findById(receiver);
+    if (!receiverUser && !receiverDriver) {
+      throw new Error("Receiver not found");
+    }
+
+    // Emit message to receiver
+    socketService.emitToUser(receiver, "typing", { sender });
+
+    // Emit message to sender
+    socketService.emitToUser(sender, "typing", { sender });
+  } catch (error) {
+    console.log(error);
+  }
+});
