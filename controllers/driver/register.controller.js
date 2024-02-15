@@ -12,6 +12,10 @@ async function createDriver(req, res) {
       driversLicense,
     } = req.body;
 
+    if (!firstname || !lastname || !email || !phone || !vehicleDetails) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
     const newDriver = new Driver({
       firstname,
       lastname,

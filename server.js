@@ -4,7 +4,7 @@ require("./models/db.js");
 const helmet = require("helmet");
 const express = require("express");
 const app = express();
-const PORT = process.env.PORT || 3500;
+const PORT = process.env.PORT || 3000;
 const cors = require("cors");
 
 app.use(express.json());

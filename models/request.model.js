@@ -9,12 +9,12 @@ const requestSchema = new Schema(
       ref: "Users",
     },
     pickup_location: {
-      type: String,
-      required: true,
+      lat: { type: Number, required: true },
+      lng: { type: Number, required: true },
     },
     dropoff_location: {
-      type: String,
-      required: true,
+      lat: { type: Number, required: true },
+      lng: { type: Number, required: true },
     },
     car_type: {
       type: String,

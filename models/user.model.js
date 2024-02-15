@@ -52,7 +52,7 @@ const userSchema = new Schema(
   { timestamps: true }
 );
 
-userSchema.pre("save", async function (next) {
+userSchema.pre("save", function (next) {
   // if profile_picture is not set, set it to a default image https://ui-avatars.com/api/?name=John+Doe
   if (!this.profile_picture) {
     this.profile_picture =

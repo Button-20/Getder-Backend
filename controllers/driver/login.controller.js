@@ -1,7 +1,7 @@
 const Driver = require("../../models/driver.model");
 const generateToken = require("../../utils/generateToken");
 
-async function login(req, res) {
+async function login(req, res) {x
   try {
     const { email, phone, driversLicense } = req.body;
 

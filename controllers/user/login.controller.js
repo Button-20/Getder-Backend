@@ -1,13 +1,11 @@
 const User = require("../../models/user.model");
-const firebase = require("../../config/firebase.config");
 const generateToken = require("../../utils/generateToken");
 
 async function login(req, res) {
   try {
-    const { firstname, lastname, email, phone, authMethod, profile_picture } =
-      req.body;
+    const { email, authMethod, phone, firstname, lastname } = req.body;
 
-    if (!firstname || !lastname || !email || !authMethod) {
+    if (!email || !authMethod || !phone) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
@@ -21,16 +19,14 @@ async function login(req, res) {
           if (!phone) {
             return res.status(400).json({ message: "Missing required fields" });
           }
-          user = new User({ firstname, lastname, phone, authMethod });
-          break;
+          return res.status(404).json({ message: "User not found" });
         case "google":
         case "facebook":
           user = new User({
+            email,
             firstname,
             lastname,
-            email,
             authMethod,
-            profile_picture,
             isLoggedIn: true,
           });
           break;
@@ -44,23 +40,15 @@ async function login(req, res) {
 
       if (authMethod !== "local") {
         const token = generateToken(user);
-        return res.status(200).json({ message: "User created", token });
+        return res.status(201).json({ message: "User created", token });
       }
 
-      return res.status(200).json({ message: "User created" });
+      return res.status(201).json({ message: "User created" });
     }
 
     if (authMethod !== "local") {
       const token = generateToken(user);
       return res.status(200).json({ message: "User logged in", token });
-    }
-
-    const confirmationResult = await firebase
-      .auth()
-      .getUserByPhoneNumber(phone);
-
-    if (!confirmationResult?.metadata?.lastSignInTime) {
-      return res.status(400).json({ message: "Phone number is not verified" });
     }
 
     user.isLoggedIn = true;
