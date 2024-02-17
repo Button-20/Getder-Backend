@@ -1,4 +1,5 @@
 const User = require("../../models/user.model");
+const verifyUser = require("../../middleware/verifyUser.module");
 
 async function profile(req, res) {
   return await new Promise(async (resolve, reject) => {

@@ -5,7 +5,7 @@ async function login(req, res) {
   try {
     const { email, authMethod, phone, firstname, lastname } = req.body;
 
-    if (!email || !authMethod || !phone) {
+    if ((!email || !phone) && !authMethod) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
