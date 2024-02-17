@@ -64,9 +64,9 @@ We welcome contributions from the community! Feel free to open issues, submit pu
    ```
 5. Submit a pull request.
 
-**License:**
+<!-- **License:**
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details. -->
 
 **Acknowledgements:**
 
