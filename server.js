@@ -22,4 +22,4 @@ let server = app.listen(PORT, () => {
 });
 
 // Socket.io
-require("./config/socket.config.js").socketConfig(server);
+require("./config/socket.config.js").socketConfig(server, PORT);

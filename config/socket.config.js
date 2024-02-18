@@ -5,8 +5,8 @@ const User = require("../models/user.model");
 let io;
 let socket;
 
-function socketConfig(server) {
-  console.log("Socket config started on PORT:", server.address().port);
+function socketConfig(server, PORT) {
+  console.log("Socket config started on PORT: ", PORT);
   io = socketio(server, {
     cors: {
       origin: "*",
