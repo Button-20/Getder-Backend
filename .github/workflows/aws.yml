@@ -24,6 +24,6 @@ jobs:
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
             cd ~/getder-backend
-            sudo git pull origin main
+            sudo git pull origin master
             sudo npm install
             sudo pm2 start server.js
