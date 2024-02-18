@@ -13,8 +13,6 @@ async function create(req, res) {
       symbol,
     } = req.body;
 
-    console.log(req.body, req._id);
-
     if (
       !pickup_location ||
       !dropoff_location ||
@@ -38,7 +36,7 @@ async function create(req, res) {
     await request.save();
 
     // Trigger event
-    socketService.emitToUser("trigger", {
+    socketService.emitToRoom("drivers", "trigger", {
       trigger: TRIGGERS.NEW_REQUEST,
       data: request,
     });
