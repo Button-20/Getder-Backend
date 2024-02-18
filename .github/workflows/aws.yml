@@ -23,8 +23,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            cd /path/to/your/app
-            git pull origin main
-            npm install
-            npm run build
-            npm run start
+            cd ~/getder-backend
+            sudo git pull origin main
+            sudo npm install
+            sudo pm2 start server.js
