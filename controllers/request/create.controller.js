@@ -1,5 +1,4 @@
 const Request = require("../../models/request.model");
-const verifyUser = require("../../middleware/verifyUser.module");
 const { TRIGGERS } = require("../../utils/variables");
 const socketService = require("../../config/socket.config");
 
@@ -20,12 +19,13 @@ async function create(req, res) {
       !car_type ||
       !suggested_price ||
       !code ||
-      !symbol
+      !symbol ||
+      !req._id
     )
       return res.status(400).json({ message: "😒 Invalid request!!" });
 
     const request = new Request({
-      user: req.user._id,
+      user: req._id,
       pickup_location,
       dropoff_location,
       car_type,
@@ -56,5 +56,5 @@ async function create(req, res) {
 module.exports = {
   method: "post",
   route: "/request",
-  controller: [verifyUser, create],
+  controller: [create],
 };

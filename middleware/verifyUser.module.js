@@ -8,8 +8,9 @@ module.exports = async function (req, res, next) {
         message: "😥 User not found",
       });
     }
-   
-    next(); req.user = user;
+
+    next();
+    req.user = user;
   } catch (error) {
     return res.status(500).json({
       message: "Internal server error",
