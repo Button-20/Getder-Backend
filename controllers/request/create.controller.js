@@ -13,6 +13,8 @@ async function create(req, res) {
       symbol,
     } = req.body;
 
+    console.log(req.body, req._id);
+
     if (
       !pickup_location ||
       !dropoff_location ||
