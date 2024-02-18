@@ -4,6 +4,13 @@ const verifyUser = require("../../middleware/verifyUser.module");
 async function profile(req, res) {
   return await new Promise(async (resolve, reject) => {
     try {
+      if (!req._id) {
+        return resolve(
+          res.status(400).json({
+            message: "😒 Invalid request!!",
+          })
+        );
+      }
       const user = await User.findOne({ _id: req._id });
       if (!user) {
         return resolve(
@@ -32,5 +39,5 @@ async function profile(req, res) {
 module.exports = {
   method: "get",
   route: "/profile",
-  controller: [verifyUser, profile],
+  controller: [profile],
 };
