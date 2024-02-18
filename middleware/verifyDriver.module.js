@@ -5,7 +5,7 @@ module.exports = async function (req, res, next) {
     const driver = await Driver.findOne({ _id: req._id });
     if (!driver) {
       return res.status(404).json({
-        message: "😥 User not found",
+        message: "😒 Bad request",
       });
     }
     req.driver = driver;
