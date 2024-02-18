@@ -11,12 +11,8 @@ const vehicleTypeSchema = new Schema(
       type: String,
       required: true,
     },
-    cost: {
+    multiplier: {
       type: Number,
-      required: true,
-    },
-    currency: {
-      type: String,
       required: true,
     },
   },
