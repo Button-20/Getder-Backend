@@ -11,10 +11,12 @@ const requestSchema = new Schema(
     pickup_location: {
       lat: { type: Number, required: true },
       lng: { type: Number, required: true },
+      description: { type: String, required: true },
     },
     dropoff_location: {
       lat: { type: Number, required: true },
       lng: { type: Number, required: true },
+      description: { type: String, required: true },
     },
     car_type: {
       type: String,
