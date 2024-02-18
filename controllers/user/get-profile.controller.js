@@ -4,7 +4,6 @@ const verifyUser = require("../../middleware/verifyUser.module");
 async function profile(req, res) {
   return await new Promise(async (resolve, reject) => {
     try {
-      console.log(req._id);
       if (!req._id) {
         return resolve(
           res.status(400).json({
