@@ -32,5 +32,5 @@ async function profile(req, res) {
 module.exports = {
   method: "get",
   route: "/profile",
-  controller: [profile],
+  controller: [verifyUser, profile],
 };
