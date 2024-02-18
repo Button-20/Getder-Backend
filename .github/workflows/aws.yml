@@ -26,5 +26,4 @@ jobs:
             cd ~/getder-backend
             sudo git pull origin master
             sudo npm install
-            pm2 status | grep -q server || sudo pm2 start server.js
             pm2 restart server
