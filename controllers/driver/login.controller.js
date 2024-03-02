@@ -1,19 +1,16 @@
 const Driver = require("../../models/driver.model");
 const generateToken = require("../../utils/generateToken");
 
-async function login(req, res) {x
+async function login(req, res) {
   try {
-    const { email, phone, driversLicense } = req.body;
+    const { phone } = req.body;
 
-    if (!email && !phone) {
-      return res.status(400).json({ message: "Email or phone is required for login" });
+    if (!phone) {
+      return res.status(400).json({ message: "Missing required fields" });
     }
 
-    // Find the driver by email or phone
-    const driver = await Driver.findOne({
-      $or: [{ email }, { phone }],
-      driversLicense,
-    });
+    // Find the driver by phone
+    const driver = await Driver.findOne({ phone });
 
     if (!driver) {
       return res.status(401).json({ message: "Invalid credentials" });
@@ -22,8 +19,7 @@ async function login(req, res) {x
     // Generate token
     const token = generateToken(driver);
 
-    // Update driver status, e.g., set isLoggedIn to true
-    driver.isLoggedIn = true;
+    // Save driver in the database
     await driver.save();
 
     return res

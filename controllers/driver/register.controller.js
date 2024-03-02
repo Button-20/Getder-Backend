@@ -1,4 +1,5 @@
 const Driver = require("../../models/driver.model");
+const Vehicle = require("../../models/vehicle.model");
 
 async function createDriver(req, res) {
   try {
@@ -8,35 +9,63 @@ async function createDriver(req, res) {
       email,
       phone,
       profile_picture,
-      vehicleDetails,
       driversLicense,
+      type,
+      brand,
+      model,
+      color,
+      plateNumber,
+      year,
+      vehicleRegistrationStickerImage,
+      roadWorthyCertificate,
     } = req.body;
 
-    if (!firstname || !lastname || !email || !phone || !vehicleDetails) {
+    if (
+      !firstname ||
+      !lastname ||
+      !email ||
+      !phone ||
+      !profile_picture ||
+      !driversLicense ||
+      !type ||
+      !brand ||
+      !model ||
+      !color ||
+      !plateNumber ||
+      !year
+    ) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
-    const newDriver = new Driver({
+    let newDriver = new Driver({
       firstname,
       lastname,
       email,
       phone,
-      vehicleDetails: {
-        type: vehicleDetails.vehicleType,
-        model: vehicleDetails.model,
-        plateNumber: vehicleDetails.plateNumber,
-        color: vehicleDetails.color,
-      },
       profile_picture,
       driversLicense,
-      available: false, // Default to false for new drivers
     });
 
-    await newDriver.save();
+    newDriver = await newDriver.save();
+
+    let newVehicle = new Vehicle({
+      type,
+      brand,
+      model,
+      color,
+      plateNumber,
+      year,
+      vehicleRegistrationStickerImage,
+      roadWorthyCertificate,
+      driver: newDriver._id,
+    });
+
+    newVehicle = await newVehicle.save();
+
+    newDriver.vehicle = newVehicle._id;
 
     return res.status(201).json({
       message: "🎉 Driver created successfully!!",
-      driverId: newDriver._id,
     });
   } catch (error) {
     console.error(error);

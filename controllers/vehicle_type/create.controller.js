@@ -2,9 +2,9 @@ const VehicleType = require("../../models/vehicle_type.model");
 
 async function create(req, res) {
   try {
-    const { type, image, cost, currency } = req.body;
+    const { type, image, cost } = req.body;
 
-    if (!type || !image || !cost || !currency)
+    if (!type || !image || !cost)
       return res.status(400).json({ message: "😒 Invalid request!!" });
 
     // Create vehicle type
@@ -12,7 +12,6 @@ async function create(req, res) {
       type,
       image,
       cost,
-      currency,
     });
 
     // Create vehicle type

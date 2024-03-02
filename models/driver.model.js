@@ -32,10 +32,6 @@ const driverSchema = new Schema(
       type: String,
       default: "",
     },
-    isLoggedIn: {
-      type: Boolean,
-      default: false,
-    },
     online: {
       type: Boolean,
       default: false,
@@ -44,25 +40,6 @@ const driverSchema = new Schema(
       type: String,
       enum: ["local", "google", "facebook"],
       default: "local",
-    },
-    vehicleDetails: {
-      type: {
-        type: Schema.Types.ObjectId,
-        required: true,
-        ref: "VehicleType",
-      },
-      model: {
-        type: String,
-        required: true,
-      },
-      plateNumber: {
-        type: String,
-        required: true,
-      },
-      color: {
-        type: String,
-        required: true,
-      },
     },
     driversLicense: {
       type: String,
@@ -78,20 +55,13 @@ const driverSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    vehicle: {
+      type: Schema.Types.ObjectId,
+      ref: "Vehicle",
+      required: true,
+    },
   },
   { timestamps: true }
 );
-
-driverSchema.pre("save", async function (next) {
-  // if profile_picture is not set, set it to a default image https://ui-avatars.com/api/?name=John+Doe
-  if (!this.profile_picture) {
-    this.profile_picture =
-      "https://ui-avatars.com/api/?name=" +
-      this.firstname +
-      "+" +
-      this.lastname;
-  }
-  next();
-});
 
 module.exports = mongoose.model("Driver", driverSchema);

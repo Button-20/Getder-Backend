@@ -19,8 +19,9 @@ const requestSchema = new Schema(
       description: { type: String, required: true },
     },
     car_type: {
-      type: String,
+      type: Schema.Types.ObjectId,
       required: true,
+      ref: "VehicleType",
     },
     suggested_price: {
       type: Number,

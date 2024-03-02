@@ -1,12 +1,13 @@
 const socketio = require("socket.io");
 const connectedUsers = {};
 const User = require("../models/user.model");
+const Driver = require("../models/driver.model");
 
 let io;
-let socket;
+let socketConnection;
 
 function socketConfig(server, PORT) {
-  console.log("Socket config started on PORT: ", PORT);
+  console.log("Socket config started on PORT:", PORT);
   io = socketio(server, {
     cors: {
       origin: "*",
@@ -19,20 +20,38 @@ function socketConfig(server, PORT) {
 
 async function handleConnection(socket) {
   console.log("Socket connection established");
+  socketConnection = socket;
 
   socket.on("join", async (data) => {
     try {
       console.log("User joined:", data.userId);
-      const user = await User.findOne({ _id: data.userId });
 
-      if (!user) {
+      // Check if user or driver exists and join the appropriate room
+      const user = await User.findOne({ _id: data.userId });
+      const driver = await Driver.findOne({ _id: data.userId });
+
+      if (!user && !driver) {
         socket.emit("error", { message: "User not found" });
         return;
       }
 
-      user.online = true;
-      await user.save();
-      socket.join(data.userId);
+      if (user) {
+        joinRoom("users");
+      }
+
+      if (driver) {
+        joinRoom("drivers");
+      }
+
+      user &&
+        (connectedUsers[data.userId] = socket.id) &&
+        (user.online = true) &&
+        (await user.save());
+      driver &&
+        (connectedUsers[data.userId] = socket.id) &&
+        (driver.online = true) &&
+        (await driver.save());
+      joinRoom(data.userId);
       console.log("User joined:", data.userId);
     } catch (error) {
       console.error("Error during user join:", error);
@@ -43,7 +62,7 @@ async function handleConnection(socket) {
   socket.on("disconnect", handleDisconnect);
 }
 
-async function handleDisconnect() {
+async function handleDisconnect(socket) {
   console.log("Socket disconnected");
 
   for (const userId in connectedUsers) {
@@ -62,7 +81,7 @@ async function handleDisconnect() {
         break;
       } catch (error) {
         console.error("Error during user disconnect:", error);
-        socket.emit("error", { message: "Internal server error" });
+        socketConnection.emit("error", { message: "Internal server error" });
       }
     }
   }
@@ -81,7 +100,11 @@ function emitToRoom(roomId, event, data) {
 }
 
 function emitToAllExceptUser(userId, event, data) {
-  socket.broadcast.to(connectedUsers[userId]).emit(event, data);
+  socketConnection.broadcast.to(connectedUsers[userId]).emit(event, data);
+}
+
+function joinRoom(roomId) {
+  socketConnection.join(roomId);
 }
 
 const socketService = {
@@ -91,6 +114,7 @@ const socketService = {
   emitToRoom,
   emitToAllExceptUser,
   io,
+  joinRoom,
 };
 
 module.exports = socketService;
