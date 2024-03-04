@@ -14,10 +14,12 @@ const driverSchema = new Schema(
     email: {
       type: String,
       required: true,
+      unique: true,
     },
     phone: {
       type: String,
       required: true,
+      unique: true,
     },
     deactivated: {
       status: {
