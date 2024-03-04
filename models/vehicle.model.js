@@ -28,7 +28,7 @@ const vehicleSchema = new Schema(
       type: Number,
       required: true,
     },
-    vehicleRegistrationStickerImage: {
+    vehicle_license: {
       type: String,
     },
     driver: {
@@ -38,7 +38,7 @@ const vehicleSchema = new Schema(
     },
     roadWorthyCertificate: {
       type: String,
-    }
+    },
   },
   { timestamps: true }
 );

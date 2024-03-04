@@ -16,7 +16,7 @@ async function createDriver(req, res) {
       color,
       plateNumber,
       year,
-      vehicleRegistrationStickerImage,
+      vehicle_license,
       roadWorthyCertificate,
     } = req.body;
 
@@ -55,7 +55,7 @@ async function createDriver(req, res) {
       color,
       plateNumber,
       year,
-      vehicleRegistrationStickerImage,
+      vehicle_license,
       roadWorthyCertificate,
       driver: newDriver._id,
     });
