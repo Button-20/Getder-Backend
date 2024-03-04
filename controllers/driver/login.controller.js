@@ -13,7 +13,7 @@ async function login(req, res) {
     const driver = await Driver.findOne({ phone });
 
     if (!driver) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(401).json({ message: "Driver not found" });
     }
 
     // Generate token
