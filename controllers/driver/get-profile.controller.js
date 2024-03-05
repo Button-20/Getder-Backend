@@ -2,7 +2,9 @@ const Driver = require("../../models/driver.model");
 
 async function profile(req, res) {
   try {
-    const driver = await Driver.findOne({ _id: req._id });
+    const driver = await Driver.findOne({ _id: req._id }).populate(
+      "vehicle"
+    );
     if (!driver) {
       return res.status(404).json({
         message: "😥 User not found",
