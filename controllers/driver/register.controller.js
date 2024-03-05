@@ -1,5 +1,6 @@
 const Driver = require("../../models/driver.model");
 const Vehicle = require("../../models/vehicle.model");
+const { ObjectId } = require("mongoose").Types;
 
 async function createDriver(req, res) {
   try {
@@ -37,6 +38,10 @@ async function createDriver(req, res) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
+    if (!ObjectId.isValid(type)) {
+      return res.status(400).json({ message: "Invalid type" });
+    }
+
     let newDriver = new Driver({
       firstname,
       lastname,
@@ -64,11 +69,18 @@ async function createDriver(req, res) {
 
     newDriver.vehicle = newVehicle._id;
 
+    await newDriver.save();
+
     return res.status(201).json({
       message: "🎉 Driver created successfully!!",
     });
   } catch (error) {
     console.error(error);
+
+    if (error.code === 11000) {
+      return res.status(400).json({ message: "Driver already exists" });
+    }
+
     return res.status(500).json({ message: "Internal server error" });
   }
 }
