@@ -7,9 +7,7 @@ async function getLatestRequests(req, res) {
     const requests = await Request.find(
       {
         status: "pending",
-        negotiations: {
-          $not: { $elemMatch: { driver: req.driver._id } },
-        },
+        "negotiations.driver": { $ne: req.driver._id },
       },
       null,
       {
