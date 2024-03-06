@@ -1,4 +1,5 @@
 const Negotiation = require("../../models/negotiation.model");
+const Request = require("../../models/request.model");
 const verifyDriver = require("../../middleware/verifyDriver.module");
 const { TRIGGERS } = require("../../utils/variables");
 const { emitToUser } = require("../../config/socket.config");
@@ -18,6 +19,11 @@ async function create(req, res) {
     });
 
     await negotiation.save();
+
+    // Update request
+    await Request.findByIdAndUpdate(request, {
+      $push: { negotiations: negotiation._id },
+    });
 
     // Trigger event
     emitToUser("trigger", { trigger: TRIGGERS.NEW_NEGOTIATION, data: request });
