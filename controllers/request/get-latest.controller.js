@@ -13,9 +13,8 @@ async function getLatestRequests(req, res) {
       {
         sort: { createdAt: -1 },
         limit: 5,
-        populate: "negotiations",
       }
-    );
+    ).populate("negotiations");
 
     return res.status(200).json({
       message: "🎉 Requests retrieved successfully!!",
