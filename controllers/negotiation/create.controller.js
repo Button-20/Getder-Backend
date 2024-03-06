@@ -1,5 +1,5 @@
 const Negotiation = require("../../models/negotiation.model");
-const verifyUser = require("../../middleware/verifyUser.module");
+const verifyDriver = require("../../middleware/verifyDriver.module");
 const { TRIGGERS } = require("../../utils/variables");
 const { emitToUser } = require("../../config/socket.config");
 
@@ -37,5 +37,5 @@ async function create(req, res) {
 module.exports = {
   method: "post",
   route: "/negotiation",
-  controller: [verifyUser, create],
+  controller: [verifyDriver, create],
 };
