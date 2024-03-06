@@ -23,6 +23,12 @@ async function getLatestRequests(req, res) {
           "negotiations.driver": { $ne: req.driver._id },
         },
       },
+      {
+        $limit: 5,
+      },
+      {
+        $sort: { createdAt: -1 },
+      },
     ]);
 
     return res.status(200).json({
