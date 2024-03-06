@@ -13,7 +13,7 @@ const negotiationSchema = new Schema(
       required: true,
       ref: "Driver",
     },
-    suggested_price: {
+    price: {
       type: Number,
       required: true,
     },
@@ -26,11 +26,6 @@ const negotiationSchema = new Schema(
         type: String,
         required: true,
       },
-    },
-    chat_session: {
-      type: Schema.Types.ObjectId,
-      required: true,
-      ref: "ChatSession",
     },
     status: {
       type: String,
