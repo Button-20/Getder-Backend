@@ -33,7 +33,7 @@ async function handleConnection(socket) {
         socket.emit("error", { message: "Token expired" });
         return;
       }
-      
+
       // Check if user or driver exists and join the appropriate room
       const user = await User.findOne({ _id });
       const driver = await Driver.findOne({ _id });
@@ -60,7 +60,6 @@ async function handleConnection(socket) {
         (driver.online = true) &&
         (await driver.save());
       joinRoom(_id);
-      console.log("User joined:", _id);
     } catch (error) {
       console.error("Error during user join:", error);
       socket.emit("error", { message: "Internal server error" });

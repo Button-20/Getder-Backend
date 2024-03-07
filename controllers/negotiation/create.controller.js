@@ -28,7 +28,7 @@ async function create(req, res) {
     // Trigger event
     emitToUser(updatedRequest.user, "trigger", {
       trigger: TRIGGERS.NEW_NEGOTIATION,
-      data: request,
+      data: negotiation,
     });
 
     return res.status(200).json({
