@@ -8,14 +8,14 @@ let io;
 let socketConnection;
 
 function socketConfig(server, PORT) {
-  console.log("Socket config started on PORT:", PORT);
   io = socketio(server, {
     cors: {
       origin: "*",
       methods: ["GET", "POST"],
     },
   });
-
+  
+  console.log("Socket config started on PORT:", PORT);
   io.on("connection", handleConnection);
 }
 
@@ -25,7 +25,7 @@ async function handleConnection(socket) {
 
   socket.on("join", async (data) => {
     try {
-      console.log("User joined:", data.token);
+      console.log("User joined:", data);
       let { _id } = jwt.verify(data.token, process.env.JWT_SECRET);
 
       // Check if user or driver exists and join the appropriate room
