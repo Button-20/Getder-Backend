@@ -26,8 +26,14 @@ async function handleConnection(socket) {
   socket.on("join", async (data) => {
     try {
       console.log("User joined:", data);
-      let { _id } = jwt.verify(data.token, process.env.JWT_SECRET);
+      let { _id, exp } = jwt.verify(data.token, process.env.JWT_SECRET);
 
+      // Check if token is expired
+      if (Date.now() > exp * 1000) {
+        socket.emit("error", { message: "Token expired" });
+        return;
+      }
+      
       // Check if user or driver exists and join the appropriate room
       const user = await User.findOne({ _id });
       const driver = await Driver.findOne({ _id });
