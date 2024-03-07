@@ -1,4 +1,5 @@
 const socketio = require("socket.io");
+const jwt = require("jsonwebtoken");
 const connectedUsers = {};
 const User = require("../models/user.model");
 const Driver = require("../models/driver.model");
@@ -24,11 +25,12 @@ async function handleConnection(socket) {
 
   socket.on("join", async (data) => {
     try {
-      console.log("User joined:", data.userId);
+      console.log("User joined:", data.token);
+      let { _id } = jwt.verify(data.token, process.env.JWT_SECRET);
 
       // Check if user or driver exists and join the appropriate room
-      const user = await User.findOne({ _id: data.userId });
-      const driver = await Driver.findOne({ _id: data.userId });
+      const user = await User.findOne({ _id });
+      const driver = await Driver.findOne({ _id });
 
       if (!user && !driver) {
         socket.emit("error", { message: "User not found" });
@@ -44,15 +46,15 @@ async function handleConnection(socket) {
       }
 
       user &&
-        (connectedUsers[data.userId] = socket.id) &&
+        (connectedUsers[_id] = socket.id) &&
         (user.online = true) &&
         (await user.save());
       driver &&
-        (connectedUsers[data.userId] = socket.id) &&
+        (connectedUsers[_id] = socket.id) &&
         (driver.online = true) &&
         (await driver.save());
-      joinRoom(data.userId);
-      console.log("User joined:", data.userId);
+      joinRoom(_id);
+      console.log("User joined:", _id);
     } catch (error) {
       console.error("Error during user join:", error);
       socket.emit("error", { message: "Internal server error" });
