@@ -18,7 +18,8 @@ async function create(req, res) {
       price,
     });
 
-    await negotiation.save();
+    let savedNegotiation = await negotiation.save();
+    savedNegotiation = savedNegotiation.populate("driver").execPopulate();
 
     // Update request
     const updatedRequest = await Request.findByIdAndUpdate(request, {
@@ -28,12 +29,12 @@ async function create(req, res) {
     // Trigger event
     emitToUser(updatedRequest.user, "trigger", {
       trigger: TRIGGERS.NEW_NEGOTIATION,
-      data: negotiation.populate("driver"),
+      data: savedNegotiation,
     });
 
     return res.status(200).json({
       message: "🎉 Negotiation created successfully!!",
-      data: negotiation,
+      data: savedNegotiation,
     });
   } catch (error) {
     return res.status(500).json({
