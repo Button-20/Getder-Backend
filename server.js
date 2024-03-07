@@ -16,9 +16,9 @@ app.use(helmet());
 const routes = require("./router/route.js");
 app.use("/api/v1", routes);
 
-app.get("/", (req, res) => {
-  res.send("You are in the wrong place. Please go to /api/v1");
-})
+// app.get("/", (req, res) => {
+//   res.send("You are in the wrong place. Please go to /api/v1");
+// })
 
 // Start server on port
 let server = app.listen(PORT, () => {
