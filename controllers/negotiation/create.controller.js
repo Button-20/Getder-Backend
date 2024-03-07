@@ -21,12 +21,15 @@ async function create(req, res) {
     await negotiation.save();
 
     // Update request
-    await Request.findByIdAndUpdate(request, {
+    const updatedRequest = await Request.findByIdAndUpdate(request, {
       $push: { negotiations: negotiation._id },
     });
 
     // Trigger event
-    emitToUser("trigger", { trigger: TRIGGERS.NEW_NEGOTIATION, data: request });
+    emitToUser(updatedRequest.user, "trigger", {
+      trigger: TRIGGERS.NEW_NEGOTIATION,
+      data: request,
+    });
 
     return res.status(200).json({
       message: "🎉 Negotiation created successfully!!",
