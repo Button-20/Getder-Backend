@@ -6,7 +6,7 @@ const requestSchema = new Schema(
     user: {
       type: Schema.Types.ObjectId,
       required: true,
-      ref: "Users",
+      ref: "User",
     },
     pickup_location: {
       lat: { type: Number, required: true },
