@@ -8,33 +8,50 @@ async function create(req, res) {
   try {
     const { request, price, code, symbol } = req.body;
 
-    if (!request || !price || !code || !symbol)
+    if (!request || !price || !code || !symbol) {
       return res.status(400).json({ message: "😒 Invalid request!!" });
+    }
 
-    const negotiation = new Negotiation({
+    const requestData = await Request.findById(request).populate(
+      "negotiations"
+    );
+
+    if (!requestData) {
+      return res.status(404).json({ message: "😥 Request not found" });
+    }
+
+    const driverHasNegotiation = requestData.negotiations.some((negotiation) =>
+      negotiation.driver.equals(req.driver._id)
+    );
+
+    if (driverHasNegotiation) {
+      return res.status(400).json({
+        message: "😒 You have already sent a negotiation offer",
+      });
+    }
+
+    const negotiation = await Negotiation.create({
       request,
       driver: req.driver._id,
       currency: { code, symbol },
       price,
     });
 
-    let savedNegotiation = await negotiation.save();
-    savedNegotiation = await savedNegotiation.populate([
-      {
-        path: "driver",
-        populate: {
-          path: "vehicle",
-        },
-      },
-    ]);
-
     // Update request
-    const updatedRequest = await Request.findByIdAndUpdate(request, {
+    await Request.findByIdAndUpdate(request, {
       $push: { negotiations: negotiation._id },
     });
 
+    // Populate negotiation with driver and vehicle details
+    const savedNegotiation = await negotiation
+      .populate({
+        path: "driver",
+        populate: { path: "vehicle" },
+      })
+      .execPopulate();
+
     // Trigger event
-    emitToUser(updatedRequest.user, "trigger", {
+    emitToUser(requestData.user, "trigger", {
       trigger: TRIGGERS.NEW_NEGOTIATION,
       data: savedNegotiation,
     });
@@ -44,10 +61,10 @@ async function create(req, res) {
       data: savedNegotiation,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.status(500).json({
       message: "Internal server error",
-      error: error,
+      error: error.message,
     });
   }
 }
