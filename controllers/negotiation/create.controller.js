@@ -19,7 +19,14 @@ async function create(req, res) {
     });
 
     let savedNegotiation = await negotiation.save();
-    savedNegotiation = savedNegotiation.populate("driver").execPopulate();
+    savedNegotiation = await savedNegotiation.populate([
+      {
+        path: "driver",
+        populate: {
+          path: "vehicle",
+        },
+      },
+    ]);
 
     // Update request
     const updatedRequest = await Request.findByIdAndUpdate(request, {
@@ -37,6 +44,7 @@ async function create(req, res) {
       data: savedNegotiation,
     });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({
       message: "Internal server error",
       error: error,
