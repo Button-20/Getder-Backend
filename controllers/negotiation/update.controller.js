@@ -62,7 +62,7 @@ async function updateNegotiation(req, res) {
 }
 
 module.exports = {
-  method: "post",
-  route: "/negotiation",
+  method: "put",
+  route: "/negotiation/:negotiation_id",
   controller: [verifyUser, updateNegotiation],
 };
