@@ -43,12 +43,10 @@ async function create(req, res) {
     });
 
     // Populate negotiation with driver and vehicle details
-    const savedNegotiation = await negotiation
-      .populate({
-        path: "driver",
-        populate: { path: "vehicle" },
-      })
-      .execPopulate();
+    const savedNegotiation = await negotiation.populate({
+      path: "driver",
+      populate: { path: "vehicle" },
+    });
 
     // Trigger event
     emitToUser(requestData.user, "trigger", {
