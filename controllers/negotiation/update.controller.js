@@ -24,7 +24,7 @@ async function updateNegotiation(req, res) {
 
     if (!negotiation)
       return res.status(404).json({ message: "😥 Negotiation not found" });
-
+    console.log(negotiation.request);
     if (negotiation.request.user._id.toString() !== req._id.toString())
       return res.status(403).json({ message: "😒 You are not authorized" });
 
