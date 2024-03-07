@@ -6,14 +6,14 @@ const { emitToUser } = require("../../config/socket.config");
 
 async function create(req, res) {
   try {
-    const { request, driver, price, code, symbol } = req.body;
+    const { request, price, code, symbol } = req.body;
 
-    if (!request || !driver || !price || !code || !symbol)
+    if (!request || !price || !code || !symbol)
       return res.status(400).json({ message: "😒 Invalid request!!" });
 
     const negotiation = new Negotiation({
       request,
-      driver,
+      driver: req.driver._id,
       currency: { code, symbol },
       price,
     });
@@ -28,7 +28,7 @@ async function create(req, res) {
     // Trigger event
     emitToUser(updatedRequest.user, "trigger", {
       trigger: TRIGGERS.NEW_NEGOTIATION,
-      data: negotiation,
+      data: negotiation.populate("driver"),
     });
 
     return res.status(200).json({
