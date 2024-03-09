@@ -27,6 +27,11 @@ const negotiationSchema = new Schema(
         required: true,
       },
     },
+    negotiationEndTime: {
+      type: Date,
+      default: Date.now() + 180000,
+      required: true,
+    },
     status: {
       type: String,
       enum: ["pending", "accepted", "rejected"],

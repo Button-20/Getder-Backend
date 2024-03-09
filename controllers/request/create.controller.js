@@ -24,7 +24,7 @@ async function create(req, res) {
     )
       return res.status(400).json({ message: "😒 Invalid request!!" });
 
-    const request = new Request({
+    let request = new Request({
       user: req._id,
       pickup_location,
       dropoff_location,
@@ -33,7 +33,7 @@ async function create(req, res) {
       suggested_price,
     });
 
-    await request.save();
+    request = await request.save();
 
     // Trigger event
     socketService.emitToRoom("drivers", "trigger", {
