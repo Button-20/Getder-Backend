@@ -14,7 +14,7 @@ function socketConfig(server, PORT) {
       methods: ["GET", "POST"],
     },
   });
-  
+
   console.log("Socket config started on PORT:", PORT);
   io.on("connection", handleConnection);
 }
@@ -23,10 +23,9 @@ async function handleConnection(socket) {
   console.log("Socket connection established");
   socketConnection = socket;
 
-  socket.on("join", async (data) => {
+  socket.on("join", async ({ token, location }) => {
     try {
-      console.log("User joined:", data);
-      let { _id, exp } = jwt.verify(data.token, process.env.JWT_SECRET);
+      let { _id, exp } = jwt.verify(token, process.env.JWT_SECRET);
 
       // Check if token is expired
       if (Date.now() > exp * 1000) {
@@ -43,22 +42,27 @@ async function handleConnection(socket) {
         return;
       }
 
+      connectedUsers[_id] = socket.id;
+
       if (user) {
         joinRoom("users");
+        user.online = true;
+        user.locationHistory.push({
+          lat: location?.coords.latitude,
+          lng: location?.coords.longitude,
+        });
+        await user.save();
       }
 
       if (driver) {
         joinRoom("drivers");
+        driver.online = true;
+        driver.locationHistory.push({
+          lat: location?.coords.latitude,
+          lng: location?.coords.longitude,
+        })
+        await driver.save();
       }
-
-      user &&
-        (connectedUsers[_id] = socket.id) &&
-        (user.online = true) &&
-        (await user.save());
-      driver &&
-        (connectedUsers[_id] = socket.id) &&
-        (driver.online = true) &&
-        (await driver.save());
       joinRoom(_id);
     } catch (error) {
       console.error("Error during user join:", error);

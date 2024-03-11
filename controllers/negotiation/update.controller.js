@@ -1,8 +1,8 @@
 const Negotiation = require("../../models/negotiation.model");
 const Request = require("../../models/request.model");
 const verifyUser = require("../../middleware/verifyUser.module");
-// const { TRIGGERS } = require("../../utils/variables");
-// const { emitToUser } = require("../../config/socket.config");
+const { TRIGGERS } = require("../../utils/variables");
+const { emitToUser } = require("../../config/socket.config");
 
 async function updateNegotiation(req, res) {
   try {
@@ -34,7 +34,15 @@ async function updateNegotiation(req, res) {
     const updatedNegotiation = await Negotiation.findByIdAndUpdate(
       { _id: negotiation_id },
       { status }
-    );
+    ).populate([
+      {
+        path: "request",
+        populate: {
+          path: "user",
+        },
+      },
+      "driver",
+    ]);
 
     if (!updatedNegotiation)
       return res.status(404).json({ message: "😥 Negotiation not found" });
@@ -42,11 +50,26 @@ async function updateNegotiation(req, res) {
     if (status === "accepted") {
       // Update request
       const updatedRequest = await Request.findByIdAndUpdate(
-        negotiation.request._id,
+        negotiation.driver,
         { status: "ongoing" }
       );
+
       if (!updatedRequest)
         return res.status(404).json({ message: "😥 Request not found" });
+      
+      // Emit to driver
+      emitToUser(
+        updatedRequest.driver._id,
+        TRIGGERS.NEGOTIATON_UPDATE,
+        updatedNegotiation
+      );
+
+      // Emit to user
+      emitToUser(
+        updatedRequest.user._id,
+        TRIGGERS.NEGOTIATON_UPDATE,
+        updatedNegotiation
+      );
     }
 
     return res.status(200).json({

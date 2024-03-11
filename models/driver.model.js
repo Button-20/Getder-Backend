@@ -61,6 +61,12 @@ const driverSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Vehicle",
     },
+    averageRating: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 5,
+    }
   },
   { timestamps: true }
 );
