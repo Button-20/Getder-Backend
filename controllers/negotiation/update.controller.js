@@ -48,8 +48,6 @@ async function updateNegotiation(req, res) {
       return res.status(404).json({ message: "😥 Negotiation not found" });
 
     if (status === "accepted") {
-      console.log(updatedNegotiation);
-
       // Update request
       const updatedRequest = await Request.findByIdAndUpdate(
         {
@@ -64,18 +62,16 @@ async function updateNegotiation(req, res) {
         return res.status(404).json({ message: "😥 Request not found" });
 
       // Emit to driver
-      emitToUser(
-        updatedNegotiation.driver._id,
-        TRIGGERS.NEGOTIATION_UPDATE,
-        updatedNegotiation
-      );
+      emitToUser(updatedNegotiation.driver._id, "trigger", {
+        trigger: TRIGGERS.NEGOTIATION_UPDATE,
+        data: updatedNegotiation,
+      });
 
       // Emit to user
-      emitToUser(
-        updatedNegotiation.request.user._id,
-        TRIGGERS.NEGOTIATION_UPDATE,
-        updatedNegotiation
-      );
+      emitToUser(updatedNegotiation.request.user._id, "trigger", {
+        trigger: TRIGGERS.NEGOTIATION_UPDATE,
+        data: updatedNegotiation,
+      });
     }
 
     return res.status(200).json({
