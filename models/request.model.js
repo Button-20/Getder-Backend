@@ -18,15 +18,18 @@ const requestSchema = new Schema(
       lng: { type: Number, required: true },
       description: { type: String, required: true },
     },
+
     car_type: {
       type: Schema.Types.ObjectId,
       required: true,
       ref: "VehicleType",
     },
+
     suggested_price: {
       type: Number,
       required: true,
     },
+
     currency: {
       code: {
         type: String,
@@ -37,6 +40,22 @@ const requestSchema = new Schema(
         required: true,
       },
     },
+
+    driverHasArrived: {
+      type: Boolean,
+      default: false,
+    },
+
+    waitingTime: {
+      type: Number,
+      default: 0,
+    },
+
+    rideHasBegan: {
+      type: Boolean,
+      default: false,
+    },
+
     negotiations: [
       {
         type: Schema.Types.ObjectId,
@@ -44,6 +63,15 @@ const requestSchema = new Schema(
         ref: "Negotiation",
       },
     ],
+
+    messages: [
+      {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: "Message",
+      },
+    ],
+
     status: {
       type: String,
       enum: ["pending", "cancelled", "ongoing", "completed"],

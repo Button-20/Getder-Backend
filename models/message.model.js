@@ -12,11 +12,6 @@ const messageSchema = new Schema(
       type: String,
       required: true,
     },
-    chat_session: {
-      type: Schema.Types.ObjectId,
-      required: true,
-      ref: "ChatSession",
-    },
   },
   { timestamps: true }
 );
