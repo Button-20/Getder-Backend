@@ -48,6 +48,8 @@ async function updateNegotiation(req, res) {
       return res.status(404).json({ message: "😥 Negotiation not found" });
 
     if (status === "accepted") {
+      console.log(updatedNegotiation);
+
       // Update request
       const updatedRequest = await Request.findByIdAndUpdate({
         _id: updatedNegotiation.request._id,
