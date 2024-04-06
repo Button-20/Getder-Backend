@@ -51,25 +51,28 @@ async function updateNegotiation(req, res) {
       console.log(updatedNegotiation);
 
       // Update request
-      const updatedRequest = await Request.findByIdAndUpdate({
-        _id: updatedNegotiation.request._id,
-      }, {
-        status: "ongoing",
-      });
+      const updatedRequest = await Request.findByIdAndUpdate(
+        {
+          _id: updatedNegotiation.request._id,
+        },
+        {
+          status: "ongoing",
+        }
+      );
 
       if (!updatedRequest)
         return res.status(404).json({ message: "😥 Request not found" });
-      
+
       // Emit to driver
       emitToUser(
-        updatedNegotiation.driver._id,
+        updatedNegotiation.request.driver._id,
         TRIGGERS.NEGOTIATION_UPDATE,
         updatedNegotiation
       );
 
       // Emit to user
       emitToUser(
-        updatedNegotiation.user._id,
+        updatedNegotiation.request.user._id,
         TRIGGERS.NEGOTIATION_UPDATE,
         updatedNegotiation
       );
