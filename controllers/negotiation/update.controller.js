@@ -65,7 +65,7 @@ async function updateNegotiation(req, res) {
 
       // Emit to driver
       emitToUser(
-        updatedNegotiation.request.driver._id,
+        updatedNegotiation.driver._id,
         TRIGGERS.NEGOTIATION_UPDATE,
         updatedNegotiation
       );
