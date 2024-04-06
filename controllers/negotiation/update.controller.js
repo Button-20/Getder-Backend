@@ -49,10 +49,11 @@ async function updateNegotiation(req, res) {
 
     if (status === "accepted") {
       // Update request
-      const updatedRequest = await Request.findByIdAndUpdate(
-        negotiation.driver,
-        { status: "ongoing" }
-      );
+      const updatedRequest = await Request.findByIdAndUpdate({
+        _id: updatedNegotiation.request._id,
+      }, {
+        status: "ongoing",
+      });
 
       if (!updatedRequest)
         return res.status(404).json({ message: "😥 Request not found" });
