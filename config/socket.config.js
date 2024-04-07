@@ -43,7 +43,7 @@ async function handleConnection(socket) {
       }
 
       connectedUsers[_id] = socket.id;
-
+      console.log(location);
       if (user) {
         joinRoom("users");
         user.online = true;
@@ -60,7 +60,7 @@ async function handleConnection(socket) {
         driver.locationHistory.push({
           lat: location?.coords.latitude,
           lng: location?.coords.longitude,
-        })
+        });
         await driver.save();
       }
       joinRoom(_id);
