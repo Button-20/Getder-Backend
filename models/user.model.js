@@ -44,8 +44,8 @@ const userSchema = new Schema(
     },
     locationHistory: [
       {
-        type: String,
-        default: "",
+        lat: { type: Number, required: true },
+        lng: { type: Number, required: true },
       },
     ],
     averageRating: {

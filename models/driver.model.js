@@ -49,8 +49,8 @@ const driverSchema = new Schema(
     },
     locationHistory: [
       {
-        type: String,
-        default: "",
+        lat: { type: Number, required: true },
+        lng: { type: Number, required: true },
       },
     ],
     available: {
@@ -66,7 +66,7 @@ const driverSchema = new Schema(
       default: 0,
       min: 0,
       max: 5,
-    }
+    },
   },
   { timestamps: true }
 );
