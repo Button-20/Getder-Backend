@@ -43,7 +43,7 @@ async function handleConnection(socket) {
       }
 
       connectedUsers[_id] = socket.id;
-      console.log(location);
+
       if (user) {
         joinRoom("users");
         user.online = true;
@@ -103,6 +103,7 @@ function emit(event, data) {
 }
 
 function emitToUser(userId, event, data) {
+  console.log(connectedUsers);
   io.to(connectedUsers[userId]).emit(event, data);
 }
 
