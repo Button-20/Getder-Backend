@@ -103,7 +103,6 @@ function emit(event, data) {
 }
 
 function emitToUser(userId, event, data) {
-  console.log(connectedUsers);
   io.to(connectedUsers[userId]).emit(event, data);
 }
 
