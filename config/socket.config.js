@@ -50,6 +50,7 @@ async function handleConnection(socket) {
         user.locationHistory.push({
           lat: location?.coords.latitude,
           lng: location?.coords.longitude,
+          description: location?.description,
         });
         await user.save();
       }
@@ -60,6 +61,7 @@ async function handleConnection(socket) {
         driver.locationHistory.push({
           lat: location?.coords.latitude,
           lng: location?.coords.longitude,
+          description: location?.description,
         });
         await driver.save();
       }

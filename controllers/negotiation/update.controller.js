@@ -41,7 +41,12 @@ async function updateNegotiation(req, res) {
           path: "user",
         },
       },
-      "driver",
+      {
+        path: "driver",
+        populate: {
+          path: "vehicle",
+        },
+      },
     ]);
 
     if (!updatedNegotiation)

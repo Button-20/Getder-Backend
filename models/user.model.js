@@ -46,6 +46,10 @@ const userSchema = new Schema(
       {
         lat: { type: Number, required: true },
         lng: { type: Number, required: true },
+        description: {
+          type: String,
+          required: true,
+        },
       },
     ],
     averageRating: {
