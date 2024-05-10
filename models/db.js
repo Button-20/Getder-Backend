@@ -4,9 +4,8 @@ try {
   mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-  });
+  }).finally(() => console.log("MongoDB connection established"));
   require("./user.model.js");
-  console.log("MongoDB connection established");
 } catch (error) {
   console.error("Error establishing MongoDB connection:", error);
 }

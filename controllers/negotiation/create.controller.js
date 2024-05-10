@@ -49,10 +49,12 @@ async function create(req, res) {
     });
 
     // Trigger event
-    emitToUser(requestData.user, "trigger", {
-      trigger: TRIGGERS.NEW_NEGOTIATION,
-      data: savedNegotiation,
-    });
+    emitToUser(
+      requestData.user,
+      TRIGGERS.NEW_NEGOTIATION,
+      savedNegotiation,
+      "user"
+    );
 
     return res.status(200).json({
       message: "🎉 Negotiation created successfully!!",

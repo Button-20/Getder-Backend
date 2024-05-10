@@ -36,10 +36,7 @@ async function create(req, res) {
     request = await request.save();
 
     // Trigger event
-    socketService.emitToRoom("drivers", "trigger", {
-      trigger: TRIGGERS.NEW_REQUEST,
-      data: request,
-    });
+    socketService.emit(TRIGGERS.NEW_REQUEST, request);
 
     return res.status(200).json({
       message: "🎉 Request created successfully!!",
