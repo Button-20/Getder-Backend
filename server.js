@@ -1,11 +1,11 @@
 require("dotenv").config();
-require("./models/db.js");
 
 const helmet = require("helmet");
 const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 3000;
 const cors = require("cors");
+const connectDB = require("./config/db.config.js");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -21,8 +21,9 @@ app.use("/api/v1", routes);
 // })
 
 // Start server on port
-let server = app.listen(PORT, () => {
+let server = app.listen(PORT, async() => {
   console.log(`Server running on port ${PORT}`);
+  await connectDB();
 });
 
 // Socket.io

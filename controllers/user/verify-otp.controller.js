@@ -18,7 +18,7 @@ async function verifyOtp(req, res) {
       return res.status(400).send({ message: "Invalid OTP." });
     }
 
-    return res.status(200).send({
+    return res.status(200).send({ 
       message: "OTP verified successfully.",
     });
   } catch (error) {
