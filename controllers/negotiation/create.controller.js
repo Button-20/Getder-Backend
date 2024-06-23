@@ -49,6 +49,7 @@ async function create(req, res) {
     });
 
     // Trigger event
+    console.log("Emitting to user", requestData.user);
     emitToUser(
       requestData.user,
       TRIGGERS.NEW_NEGOTIATION,

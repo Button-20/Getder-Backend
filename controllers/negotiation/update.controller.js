@@ -63,6 +63,7 @@ async function updateNegotiation(req, res) {
       });
 
       // Emit to user and driver
+      console.log("Emitting to user", updatedNegotiation.request.user._id);
       emitToUser(
         updatedNegotiation.request.user._id,
         TRIGGERS.NEGOTIATION_UPDATE,
@@ -70,6 +71,7 @@ async function updateNegotiation(req, res) {
         "user"
       );
 
+      console.log("Emitting to driver", updatedNegotiation.driver._id);
       emitToUser(
         updatedNegotiation.driver._id,
         TRIGGERS.NEGOTIATION_UPDATE,
