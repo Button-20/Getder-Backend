@@ -23,15 +23,15 @@ async function sendOtp(req, res) {
     // Generate 4-digit OTP
     const otp = Math.floor(1000 + Math.random() * 9000);
 
+    // Send OTP via SMS
+    await sendSmsToUser(phone, otp);
+    
     const newOtp = new Otp({
       phone,
       otp,
     });
 
     await newOtp.save();
-
-    // Send OTP via SMS
-    if (phone) await sendSmsToUser(phone, otp);
 
     return res.status(200).send({
       message: "OTP sent successfully.",
