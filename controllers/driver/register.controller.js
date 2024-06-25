@@ -1,5 +1,6 @@
 const Driver = require("../../models/driver.model");
 const Vehicle = require("../../models/vehicle.model");
+const VehicleType = require("../../models/vehicle_type.model");
 const { ObjectId } = require("mongoose").Types;
 
 async function createDriver(req, res) {
@@ -38,8 +39,10 @@ async function createDriver(req, res) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
-    if (!ObjectId.isValid(type)) {
-      return res.status(400).json({ message: "Invalid type" });
+    const vehicleType = await VehicleType.findOne({ type });
+
+    if (!vehicleType) {
+      return res.status(400).json({ message: "Invalid vehicle type" });
     }
 
     let newDriver = new Driver({
@@ -54,7 +57,7 @@ async function createDriver(req, res) {
     newDriver = await newDriver.save();
 
     let newVehicle = new Vehicle({
-      type,
+      type: vehicleType._id,
       brand,
       model,
       color,
