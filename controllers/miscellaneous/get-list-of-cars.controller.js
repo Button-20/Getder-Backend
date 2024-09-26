@@ -17,6 +17,7 @@ async function getListOfCars(req, res) {
       return acc;
     }, {});
 
+
     return res.status(200).json({
       message: "🎉 List of cars fetched successfully!!",
       data: cars,

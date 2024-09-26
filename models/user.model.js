@@ -15,15 +15,41 @@ const userSchema = new Schema(
     },
     email: {
       type: String,
-      default: "",
       sparse: true,
       unique: true,
+      validate: [
+        {
+          validator: function (value) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+          },
+          message: "Invalid email address",
+        },
+        {
+          validator: function (value) {
+            return value ? true : false;
+          },
+          message: "Email can't be empty",
+        },
+      ],
     },
     phone: {
       type: String,
-      default: "",
       sparse: true,
       unique: true,
+      validate: [
+        {
+          validator: function (value) {
+            return /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s./0-9]*$/.test(value);
+          },
+          message: "Invalid phone number",
+        },
+        {
+          validator: function (value) {
+            return value ? true : false;
+          },
+          message: "Phone number can't be empty",
+        },
+      ],
     },
     profile_picture: {
       type: String,
@@ -76,3 +102,4 @@ userSchema.pre("save", function (next) {
 });
 
 module.exports = mongoose.model("User", userSchema);
+

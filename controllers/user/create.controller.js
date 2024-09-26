@@ -19,7 +19,7 @@ async function register(req, res) {
       if (user) {
         return res.status(400).json({ message: "User already exists" });
       }
-      user = new User({ firstname, lastname, email, phone, authMethod });
+      user = new User({ firstname, lastname, phone, authMethod });
     } else if (["google", "facebook"].includes(authMethod)) {
       if (!email) {
         return res.status(400).json({ message: "Missing required fields" });
