@@ -3,6 +3,11 @@ const Schema = mongoose.Schema;
 
 const orderSchema = new Schema(
   {
+    user: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "Users",
+    },
     pickup_location: {
       type: String,
       required: true,

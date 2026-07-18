@@ -1,7 +1,7 @@
 const Order = require("../../models/orders.model");
-const verifyDriver = require("../../middleware/verifyDriver.module");
+const verifyDriver = require("../../utils/verifyDriver");
 const { TRIGGERS } = require("../../utils/variables");
-const { emitToUser } = require("../../config/socket.config");
+const { emitToUser } = require("../../configs/socket.config");
 
 async function create(req, res) {
   try {

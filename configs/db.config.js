@@ -5,7 +5,7 @@ try {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
-  require("./user.model.js");
+  require("../models/user.model.js");
   console.log("MongoDB connection established");
 } catch (error) {
   console.error("Error establishing MongoDB connection:", error);

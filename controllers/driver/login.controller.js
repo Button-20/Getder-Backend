@@ -1,5 +1,5 @@
 const Driver = require("../../models/driver.model");
-const firebase = require("../../config/firebase.config");
+const firebase = require("../../configs/firebase.config");
 const generateToken = require("../../utils/generateToken");
 
 async function login(req, res) {
@@ -12,10 +12,12 @@ async function login(req, res) {
           res.status(400).json({ message: "Missing required fields" })
         );
 
-      // Check if user email or phone already exists
-      let driver = await Driver.findOne({
-        $or: [{ email }, { phone }],
-      });
+      const lookup = [];
+      if (email) lookup.push({ email });
+      if (phone) lookup.push({ phone });
+      if (!lookup.length)
+        return resolve(res.status(400).json({ message: "Missing required fields" }));
+      let driver = await Driver.findOne({ $or: lookup });
 
       if (!driver) {
         return resolve(
@@ -38,7 +40,12 @@ async function login(req, res) {
       );
     } catch (error) {
       console.error(error);
-      return reject(res.status(500).json({ message: "Internal server error" }));
+      // resolve, not reject: the response is already sent, and rejecting an
+      // awaited promise here becomes an unhandled rejection that crashes the
+      // whole Node process on Node >= 15.
+      return resolve(
+        res.status(500).json({ message: "Internal server error" })
+      );
     }
   });
 }

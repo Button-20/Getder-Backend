@@ -24,7 +24,10 @@ async function register(req, res) {
         res.status(200).json({ message: "🎉 Driver created successfully!!" })
       );
     } catch (error) {
-      return reject(
+      // resolve, not reject: the response is already sent, and rejecting an
+      // awaited promise here becomes an unhandled rejection that crashes the
+      // whole Node process on Node >= 15.
+      return resolve(
         res.status(500).json({ message: "😥 Internal server error" })
       );
     }

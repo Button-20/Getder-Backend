@@ -1,7 +1,6 @@
 const Order = require("../../models/orders.model");
-const verifyUser = require("../../middleware/verifyUser.module");
-const { TRIGGERS } = require("../../utils/variables");
-const { emitToUser } = require("../../config/socket.config");
+const verifyUser = require("../../utils/verifyUser");
+const { emit } = require("../../configs/socket.config");
 
 async function create(req, res) {
   try {
@@ -25,18 +24,18 @@ async function create(req, res) {
       return res.status(400).json({ message: "😒 Invalid request!!" });
 
     const order = new Order({
+      user: req.user._id,
       pickup_location,
       dropoff_location,
       car_type,
       suggested_price,
-      code,
-      symbol,
+      currency: { code, symbol },
     });
 
     await order.save();
 
-    // Trigger event
-    emitToUser("trigger", { trigger: TRIGGERS.NEW_ORDER, data: order });
+    // ponytail: broadcast to every socket; target online drivers via rooms when scale matters
+    emit("new_order", order);
 
     return res.status(200).json({
       message: "🎉 Order created successfully!!",

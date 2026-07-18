@@ -45,6 +45,23 @@ const driverSchema = new Schema(
       enum: ["local", "google", "facebook"],
       default: "local",
     },
+    vehicle_info: {
+      car_type: { type: String, enum: ["economy", "comfort", "premium"] },
+      make: String,
+      model: String,
+      year: String,
+      color: String,
+      plate: String,
+    },
+    payout_info: {
+      network: String,
+      account_number: String,
+      account_name: String,
+    },
+    onboarding_complete: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

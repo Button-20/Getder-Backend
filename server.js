@@ -1,5 +1,5 @@
 require("dotenv").config();
-require("./models/db.js");
+require("./configs/db.config.js");
 
 const helmet = require("helmet");
 const express = require("express");
@@ -14,7 +14,7 @@ app.use(cors());
 app.use(helmet());
 
 // Import all routes
-const routes = require("./router/route.js");
+const routes = require("./router/index.js");
 app.use("/api", routes);
 
 // Start server on port
@@ -23,4 +23,4 @@ let server = app.listen(PORT, () => {
 });
 
 // Socket.io
-const io = require("./config/socket.config.js").socketConfig(server);
+const io = require("./configs/socket.config.js").socketConfig(server);
