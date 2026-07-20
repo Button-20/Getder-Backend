@@ -62,6 +62,12 @@ const driverSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    otp: {
+      code: String,
+      expires: Date,
+      attempts: { type: Number, default: 0 },
+      lastSentAt: Date,
+    },
   },
   { timestamps: true }
 );

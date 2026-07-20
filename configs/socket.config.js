@@ -3,6 +3,7 @@ const connectedUsers = {};
 const User = require("../models/user.model");
 const Driver = require("../models/driver.model");
 const Order = require("../models/orders.model");
+const googleMaps = require("../services/googleMaps.service");
 
 let io;
 let userSocket;
@@ -50,6 +51,22 @@ function socketConfig(server) {
 
         const v = driver.vehicle_info ?? {};
         const riderRoom = order.user.toString();
+
+        // Real ETA: driving time from the driver's current position to the
+        // pickup. Falls back to 5 min if coords are missing or the call fails.
+        let eta = 5;
+        try {
+          if (data.lat != null && data.lng != null && order.pickup_location) {
+            const dm = await googleMaps.distanceMatrix(
+              `${data.lat},${data.lng}`,
+              order.pickup_location,
+            );
+            eta = Math.max(1, Math.round(dm.durationSeconds / 60));
+          }
+        } catch (e) {
+          console.error("eta calc failed:", e.message);
+        }
+
         console.log(
           "emitting driver_offer to room:", riderRoom,
           "— sockets in room:", io.sockets.adapter.rooms.get(riderRoom)?.size ?? 0,
@@ -57,13 +74,13 @@ function socketConfig(server) {
         io.to(riderRoom).emit("driver_offer", {
           id: driver._id.toString(),
           driverName: `${driver.firstname} ${driver.lastname?.[0] ?? ""}.`.trim(),
-          // ponytail: no rating system or ETA calc yet — hardcoded until they exist
+          // ponytail: rating still hardcoded until a rating system exists
           rating: 5.0,
           carModel: `${v.make ?? ""} ${v.model ?? ""}`.trim() || "Vehicle",
           plate: v.plate ?? "",
           phone: driver.phone,
           offeredPrice: Number(data.price ?? order.suggested_price),
-          eta: 5,
+          eta,
         });
       } catch (err) {
         console.error("accept_order failed:", err);

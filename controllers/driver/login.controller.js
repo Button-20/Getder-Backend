@@ -1,6 +1,7 @@
 const Driver = require("../../models/driver.model");
 const firebase = require("../../configs/firebase.config");
 const generateToken = require("../../utils/generateToken");
+const { sendMail } = require("../../utils/mailer");
 
 async function login(req, res) {
   return await new Promise(async (resolve, reject) => {
@@ -31,12 +32,45 @@ async function login(req, res) {
         );
       }
 
-      // Generate token
-      const token = generateToken(driver._id);
+      // Social logins are already identity-verified — issue the token directly
+      if (authMethod !== "local") {
+        const token = generateToken(driver._id);
+        return resolve(
+          res.status(200).json({ message: "🎉 Login successful!!", token })
+        );
+      }
 
-      // Send token to client
+      // Local login: email an OTP; the token is issued by /driver/verify-otp
+
+      // Rate-limit resends: one code per minute per driver
+      if (
+        driver.otp?.lastSentAt &&
+        Date.now() - driver.otp.lastSentAt.getTime() < 60 * 1000
+      ) {
+        return resolve(
+          res.status(429).json({
+            message: "Please wait a minute before requesting a new code",
+          })
+        );
+      }
+
+      const otp = String(Math.floor(100000 + Math.random() * 900000));
+      driver.otp = {
+        code: otp,
+        expires: new Date(Date.now() + 10 * 60 * 1000),
+        attempts: 0,
+        lastSentAt: new Date(),
+      };
+      await driver.save();
+      console.log(`[OTP] ${driver.email}: ${otp}`);
+      sendMail(
+        driver.email,
+        "Your JusGo Driver sign-in code",
+        `Your sign-in code is ${otp}. It expires in 10 minutes.`
+      ).catch((err) => console.error("OTP email failed:", err.message));
+
       return resolve(
-        res.status(200).json({ message: "🎉 Login successful!!", token })
+        res.status(200).json({ message: "OTP sent to your email" })
       );
     } catch (error) {
       console.error(error);
